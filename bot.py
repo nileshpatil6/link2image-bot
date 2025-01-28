@@ -3,6 +3,8 @@ import requests
 from flask import Flask
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
+import asyncio
+
 
 # Flask app to keep the web service alive
 app = Flask(__name__)
@@ -64,7 +66,7 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_image_url))
 
     # Run the bot in polling mode
-    application.run_polling()
+    asyncio.run(application.run_polling())
 
 # Flask route to keep the service alive
 @app.route('/')
@@ -72,8 +74,6 @@ def index():
     return 'Bot is running!'
 
 if __name__ == "__main__":
-    # Start the Flask app and the bot in the background
-    from threading import Thread
-    bot_thread = Thread(target=main)
-    bot_thread.start()
+    # Run the Flask app and the bot in the same thread
+    main()
     app.run(host="0.0.0.0", port=5000)
