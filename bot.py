@@ -1,13 +1,11 @@
 import logging
 import requests
+from flask import Flask
 from telegram import Update
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    MessageHandler,
-    filters,
-    CallbackContext,
-)
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
+
+# Flask app to keep the web service alive
+app = Flask(__name__)
 
 # Enable logging
 logging.basicConfig(
@@ -65,8 +63,17 @@ def main():
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_image_url))
 
-    # Run the bot
+    # Run the bot in polling mode
     application.run_polling()
 
+# Flask route to keep the service alive
+@app.route('/')
+def index():
+    return 'Bot is running!'
+
 if __name__ == "__main__":
-    main()
+    # Start the Flask app and the bot in the background
+    from threading import Thread
+    bot_thread = Thread(target=main)
+    bot_thread.start()
+    app.run(host="0.0.0.0", port=5000)
