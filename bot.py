@@ -9,14 +9,14 @@ import asyncio
 # Flask app to keep the web service alive
 app = Flask(__name__)
 
-# Enable logging
+# Enable logging 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
 # Replace with your bot's token from BotFather
-BOT_TOKEN = "8112873353:8112873353:AAEyK80yjlBHD2rkKxBiHBgTW_8obtCC8IM"
+BOT_TOKEN = "8112873353:AAEyK80yjlBHD2rkKxBiHBgTW_8obtCC8IM"
 
 # Command to start the bot
 async def start(update: Update, context: CallbackContext) -> None:
