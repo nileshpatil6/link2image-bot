@@ -10,7 +10,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Replace with your bot's token from BotFather
-BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
+BOT_TOKEN = "8112873353:AAEDnRHY7N0URG4V5fHdF5VI1bCCEfyuqDU"
 
 # Command to start the bot
 def start(update: Update, context: CallbackContext) -> None:
