@@ -16,7 +16,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Replace with your bot's token from BotFather
-BOT_TOKEN = "8112873353:AAEDnRHY7N0URG4V5fHdF5VI1bCCEfyuqDU"
+BOT_TOKEN = "8112873353:8112873353:AAEyK80yjlBHD2rkKxBiHBgTW_8obtCC8IM"
 
 # Command to start the bot
 async def start(update: Update, context: CallbackContext) -> None:
