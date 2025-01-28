@@ -1,7 +1,13 @@
 import logging
 import requests
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    MessageHandler,
+    filters,
+    CallbackContext,
+)
 
 # Enable logging
 logging.basicConfig(
@@ -13,19 +19,19 @@ logger = logging.getLogger(__name__)
 BOT_TOKEN = "8112873353:AAEDnRHY7N0URG4V5fHdF5VI1bCCEfyuqDU"
 
 # Command to start the bot
-def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text(
+async def start(update: Update, context: CallbackContext) -> None:
+    await update.message.reply_text(
         "Welcome! Send me an image URL, and I'll download it for you."
     )
 
 # Function to handle the image URL
-def handle_image_url(update: Update, context: CallbackContext) -> None:
+async def handle_image_url(update: Update, context: CallbackContext) -> None:
     url = update.message.text.strip()
     user_id = update.message.chat_id
-    
+
     # Validate URL
     if not url.startswith("http"):
-        update.message.reply_text("Please provide a valid image URL.")
+        await update.message.reply_text("Please provide a valid image URL.")
         return
 
     try:
@@ -40,34 +46,27 @@ def handle_image_url(update: Update, context: CallbackContext) -> None:
 
         # Send the image back to the user
         with open(file_name, "rb") as f:
-            context.bot.send_photo(chat_id=user_id, photo=f)
+            await context.bot.send_photo(chat_id=user_id, photo=f)
 
-        update.message.reply_text("Here is your downloaded image!")
+        await update.message.reply_text("Here is your downloaded image!")
 
     except requests.exceptions.RequestException as e:
-        update.message.reply_text(f"Failed to download the image. Error: {e}")
+        await update.message.reply_text(f"Failed to download the image. Error: {e}")
 
 # Function to handle errors
-def error(update: Update, context: CallbackContext) -> None:
+async def error(update: Update, context: CallbackContext) -> None:
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 def main():
-    # Initialize the bot
-    updater = Updater(BOT_TOKEN)
+    # Initialize the bot application
+    application = Application.builder().token(BOT_TOKEN).build()
 
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
+    # Register handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_image_url))
 
-    # Register commands and message handlers
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_image_url))
-
-    # Log all errors
-    dp.add_error_handler(error)
-
-    # Start the bot
-    updater.start_polling()
-    updater.idle()
+    # Run the bot
+    application.run_polling()
 
 if __name__ == "__main__":
     main()
